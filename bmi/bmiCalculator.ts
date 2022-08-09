@@ -1,6 +1,3 @@
-
-
-
 const calculateBmi = (mass: number, height: number) => {
   
   const bmi = mass / (height/100 * height/100);
@@ -27,15 +24,3 @@ try {
   }
   console.log(errorMessage);
 }
-
-
-// try {
-//   const { value1, value2 } = parseArguments(process.argv);
-//   calculateBmi(value1, value2, `Multiplied ${value1} and ${value2}, the result is:`);
-// } catch (error: unknown) {
-//   let errorMessage = 'Something bad happened.';
-//   if (error instanceof Error) {
-//     errorMessage += ' Error: ' + error.message;
-//   }
-//   console.log(errorMessage);
-// }
