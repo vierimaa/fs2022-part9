@@ -1,4 +1,28 @@
-interface ExcerciseStats {
+interface ExcerciseInputs {
+  targetHours: number;
+  dailyExcerciseHours: Array<number>;
+}
+
+const parseExcerciseArgs = (args: Array<string>): ExcerciseInputs => {
+  const myArgs = args.slice(2);
+  const [targetHours, ...dailyExcerciseHours] = myArgs;
+
+  if (myArgs.length < 1) {
+    throw new Error('Not enough arguments');
+  }
+
+  if (myArgs.length > 1 && myArgs.some(arg => isNaN(Number(arg)))) {
+    throw new Error('Provided values were not numbers!');
+
+  } 
+  
+  return {
+    targetHours: Number(targetHours),
+    dailyExcerciseHours: dailyExcerciseHours.map(hours => Number(hours))
+  } 
+}
+
+interface ExcerciseResults {
   periodLength: number;
   trainingDays: number;
   success: boolean;
@@ -8,15 +32,30 @@ interface ExcerciseStats {
   average: number;
 }
 
-const calculateExcercise = (dailyExcerciseHours: Array<number>): ExcerciseStats => {
+const calculateExcercise = (setTarget: number, dailyExcerciseHours: Array<number>): ExcerciseResults => {
     const periodLength = dailyExcerciseHours.length;
     const trainingDays = dailyExcerciseHours.filter(hours => hours > 0).length;
-    const success = false;
-    const rating = 2;
-    const ratingDescription = 'not too bad but could be better';
-    const target = 10;
-    const average = dailyExcerciseHours.reduce((a, b) => a + b, 0) / dailyExcerciseHours.length;
   
+    const target = setTarget;
+    const average = dailyExcerciseHours.reduce((a, b) => a + b, 0) / dailyExcerciseHours.length;
+    let success;
+    let rating;
+    let ratingDescription;
+
+    if (average >= target && average > 0) {
+      success = true;
+      rating = 3;
+      ratingDescription = 'You did great!';
+    } else if (average < target && average > 0) {
+      success = false;
+      rating = 2;
+      ratingDescription = 'You did ok.';
+    } else {
+      success = false;
+      rating = 1;
+      ratingDescription = 'You did not do anything.';
+    }
+
   return {
     periodLength,
     trainingDays,
@@ -29,7 +68,8 @@ const calculateExcercise = (dailyExcerciseHours: Array<number>): ExcerciseStats 
 }
 
 try {
-  console.log(calculateExcercise([1, 0, 3, 0, 2, 0, 2.5]));
+  const {targetHours, ...dailyExcerciseHours} = parseExcerciseArgs(process.argv);
+  console.log(calculateExcercise(targetHours, dailyExcerciseHours.dailyExcerciseHours));
 } catch (error: unknown) {
   let errorMessage = 'Something went wrong.'
   if (error instanceof Error) {
