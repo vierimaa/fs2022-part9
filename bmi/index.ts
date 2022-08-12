@@ -3,7 +3,7 @@ import calculateBmi from './bmiCalculator';
 
 const app = express();
 
-app.get('/hello', (req, res) => {
+app.get('/bmi', (req, res) => {
   const { weight, height } = req.query;
   try {
     const result = calculateBmi(Number(weight), Number(height));
