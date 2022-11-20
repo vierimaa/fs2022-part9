@@ -19,8 +19,8 @@ const parseExcerciseArgs = (args: Array<string>): ExcerciseInputs => {
   return {
     targetHours: Number(targetHours),
     dailyExcerciseHours: dailyExcerciseHours.map(hours => Number(hours))
-  } 
-}
+  }; 
+};
 
 interface ExcerciseResults {
   periodLength: number;
@@ -32,9 +32,13 @@ interface ExcerciseResults {
   average: number;
 }
 
-const calculateExcercise = (setTarget: number, dailyExcerciseHours: Array<number>): ExcerciseResults => {
+export const calculateExcercise = (setTarget: number, dailyExcerciseHours: Array<number>): ExcerciseResults => {
     const periodLength = dailyExcerciseHours.length;
     const trainingDays = dailyExcerciseHours.filter(hours => hours > 0).length;
+
+    if(isNaN(setTarget) || dailyExcerciseHours.some(day => isNaN(Number(day)))) {
+      throw new Error("Not a number");
+    }
   
     const target = setTarget;
     const average = dailyExcerciseHours.reduce((a, b) => a + b, 0) / dailyExcerciseHours.length;
@@ -64,14 +68,14 @@ const calculateExcercise = (setTarget: number, dailyExcerciseHours: Array<number
     ratingDescription,
     target,
     average
-  }
-}
+  };
+};
 
 try {
   const {targetHours, ...dailyExcerciseHours} = parseExcerciseArgs(process.argv);
   console.log(calculateExcercise(targetHours, dailyExcerciseHours.dailyExcerciseHours));
 } catch (error: unknown) {
-  let errorMessage = 'Something went wrong.'
+  let errorMessage = 'Something went wrong.';
   if (error instanceof Error) {
     errorMessage += ' Error: ' + error.message;
   }
